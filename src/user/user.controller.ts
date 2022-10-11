@@ -1,8 +1,10 @@
 import { UserService } from './user.service';
 import { UserEntity } from './user.entity';
-import { ClassSerializerInterceptor, UseInterceptors } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ClassSerializerInterceptor, UseInterceptors, UseGuards, Req } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { CreatePostDto } from './create-user.dot';
+import { AuthGuard } from '@nestjs/passport';
+
 import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 @ApiTags("用户 /user")
 @Controller('user')
@@ -10,7 +12,7 @@ export class UserController {
     constructor(private readonly UserService:UserService){}
 
     /**
-     * 创建用户
+     * 注册用户
      * @param post
      */
     @ApiOperation({ summary: '注册用户' })
@@ -22,7 +24,7 @@ export class UserController {
     }
 
     /**
-     * 获取指定用户信息
+     * 根据用户id获取指定用户信息
      * @param id 
      */
     @Get(':id')
@@ -31,15 +33,27 @@ export class UserController {
     }
 
     /**
-    * 用户登录
-    * @param username
-    * 
-    * @param password
-    */
-    @Post('/login')
-    async login(@Body() user){
-      return await this.UserService.login(user)
+     * 根据用户名称 获取指定用户信息
+     * @param username
+     */
+    @ApiOperation({ summary: '获取用户信息' })
+    @ApiBearerAuth() // swagger文档设置token
+    @UseGuards(AuthGuard('jwt'))
+    @Get()
+    getUserInfo(@Req() req) {
+        console.log('req', req)
+        return req.user;
     }
+    // /**
+    // * 用户登录
+    // * @param username
+    // * 
+    // * @param password
+    // */
+    // @Post('/login')
+    // async login(@Body() user){
+    //   return await this.UserService.login(user)
+    // }
 
     /**
      * 更新用户信息

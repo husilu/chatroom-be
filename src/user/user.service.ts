@@ -22,7 +22,8 @@ export class UserService {
       throw new HttpException('该用户名已存在', 401);
     }
     // save 数据插入
-    return await this.UserRepository.save(post);
+    const newUser = await this.UserRepository.create(post)
+    return await this.UserRepository.save(newUser);
   }
   
   // 获取文章列表
@@ -46,10 +47,10 @@ export class UserService {
   }
 
   // 用户登录
-  async login(user): Promise<UserEntity> {
-    let { username, password } = user;
-    return await this.UserRepository.findOne({where: {username, password}});
-  }
+  // async login(user): Promise<UserEntity> {
+  //   let { username, password } = user;
+  //   return await this.UserRepository.findOne({where: {username, password}});
+  // }
 
   // 更新文章
   async updateById(username, post): Promise<UserEntity> {

@@ -12,7 +12,6 @@ export class LocalStorage extends PassportStrategy(Strategy) {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
   ) {
-   
     super({
       usernameField: 'username',
       passwordField: 'password',

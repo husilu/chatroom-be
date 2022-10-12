@@ -37,13 +37,13 @@ export class UserController {
      * @param username
      */
     @ApiOperation({ summary: '获取用户信息' })
-    @ApiBearerAuth() // swagger文档设置token
+    @ApiBearerAuth()
     @UseGuards(AuthGuard('jwt'))
     @Get()
-    getUserInfo(@Req() req) {
-        console.log('req', req)
-        return req.user;
+    async getUserInfo(@Req() req) {
+    return req.user;
     }
+
     // /**
     // * 用户登录
     // * @param username

@@ -10,6 +10,7 @@ import { UserService } from '../user/user.service'
 export class AuthService {
   constructor(
     @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
     private jwtService: JwtService,
     private UserService: UserService
   ) {}
@@ -24,7 +25,7 @@ export class AuthService {
       id: user.id,
       username: user.username,
     });
-
+    // console.log('token', { token })
     return { token };
   }
 

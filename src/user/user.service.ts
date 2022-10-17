@@ -46,6 +46,9 @@ export class UserService {
     return await this.UserRepository.findOne({where: {id}});
   }
 
+  async findOne(username: string): Promise<UserEntity | undefined> {
+    return await this.UserRepository.findOne({where: {username}});
+  }
   // 用户登录
   // async login(user): Promise<UserEntity> {
   //   let { username, password } = user;

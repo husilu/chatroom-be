@@ -1,38 +1,19 @@
-// local.strategy.ts
-import { compareSync } from 'bcryptjs';
+import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
-import { IStrategyOptions, Strategy } from 'passport-local';
-import { UserEntity } from 'src/user/user.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { BadRequestException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { AuthService } from './auth.service';
 
-export class LocalStorage extends PassportStrategy(Strategy) {
-  constructor(
-    @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>,
-  ) {
-    super({
-      usernameField: 'username',
-      passwordField: 'password',
-    } as IStrategyOptions);
+@Injectable()
+export class LocalStrategy extends PassportStrategy(Strategy) {
+  constructor(private authService: AuthService) {
+    super();
   }
 
-  async validate(username: string, password: string) {
-    const user = await this.userRepository
-      .createQueryBuilder('user')
-      .addSelect('user.password')
-      .where('user.username=:username', { username })
-      .getOne();
-
+  async validate(username: string, password: string): Promise<any> {
+    const user = await this.authService.validateUser(username, password);
     if (!user) {
-      throw new BadRequestException('用户名不正确！');
+      throw new UnauthorizedException();
     }
-
-    if (!compareSync(password, user.password)) {
-      throw new BadRequestException('密码错误！');
-    }
-
     return user;
   }
 }
